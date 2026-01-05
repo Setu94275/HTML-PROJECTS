@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job-Application</title>
+</head>
+<style>
+    *{
+        margin: 0px;
+        padding: 0px;
+        box-sizing: border-box;
+    }
+    body{
+        background-color: gray;
+       
+    }
+    .container{
+       max-width: 600px;
+       margin:10px auto ;
+       margin-top: 100px;
+       
+    }
+    .box{
+        align-items: center;
+        max-width: 600px;
+        padding:10px;
+        background:white;
+        box-shadow:4px 3px 5px rgba(1,1, 0, alpha) ;
+        margin: 0 auto;
+        border-radius: 10px 20px;
+        
+    }
+    .form_container{
+        display: grid;
+        grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+        max-width: 500px;
+        padding: 20px;
+        gap: 20px;
+        background-color: white;
+        border-radius: 20px;
+        margin: 20px;
+
+    }
+    .form_lable{
+       display: flex;
+       flex-direction: column;
+       gap: 10px;
+       font-size: 15px;
+    }
+    select,input,textarea{
+        padding: 6px 10px;
+        border: 2px solid black;
+        border-radius: 10px 10px;
+        
+
+    }
+    input :focus{
+       outline-color: orangered;
+    }
+    .submition{
+        justify-content: flex-end;
+        display: flex;
+    }
+    button{
+        background-color: orangered;
+        border: orangered transparent 2px;
+        padding: 10px 10px;
+        border-radius: 10px;
+        font-size: 15px;
+        color:  white;
+    }
+    button:hover{
+        transition: cubic-bezier(0.075, 0.82, 0.165, 1);
+        background-color: gray;
+        border: 2px orangered solid;
+        color: black;
+        transition:  1s  ease-in;
+        cursor: pointer;
+    }
+</style>
+<body>
+    <div class="container">
+        <div class="box">
+            <h1>Job-Application Form</h1>
+        </div>
+        <div class="form_container">
+            <div class="form_lable">
+                <label for="text">First Name :</label>
+                <input type="text" id="First" placeholder="Enter Your First Name ...">
+            </div>
+            <div class="form_lable">
+                <label for="text">Last Name :</label>
+                <input type="text" id="Last" placeholder="Enter Your Last Name ...">
+            </div>
+                <div class="form_lable">
+                <label for="email">Email :</label>
+                <input type="email" id="email" placeholder="Enter Your Email ...">
+            </div>
+            <select name="Job_role" id="Job_role">
+               <option>Select Job Role</option>
+
+                <option value="forntend">forntend Devloper</option>
+                <option value="forntend">Backend Devloper</option>
+                <option value="forntend">Full-stack Devloper</option>
+                <option value="forntend">ui/ux Devloper</option>
+               
+            </select>
+                <div class="form_lable">
+                <label for="text">Address</label>
+                <textarea type="Address" id="Address" placeholder="Enter Address ..." row="4" cols="30"></textarea>
+            </div>
+                <div class="form_lable">
+                <label for="file">Upplode Your Resume :</label>
+                <input type="file" id="file" placeholder="Enter Your Resume ...">
+            </div>
+        </div>
+
+        <div>
+            <div class="submition">
+                <button type="submit">Apply Now</button>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>

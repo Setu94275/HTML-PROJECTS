@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Restaurant Website</title>
+    <style>
+        /* Reset CSS */
+        * {
+            padding: 0px;
+            margin: 0px;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+
+        /* --- BASIC STYLES (DESKTOP) --- */
+
+        /* Navbar Styling */
+        nav {
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            background-color: white;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px 20px;
+        }
+
+        .three {
+            display: flex;
+            cursor: pointer;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Hero Section Styling */
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 20px;
+            min-height: 80vh;
+        }
+
+        .hero-img {
+            display: flex;
+            justify-content: center;
+            flex: 1; /* Image takes equal space */
+        }
+
+        .hero-img img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            transition: transform 0.3s ease; /* Hover animation smooth karne ke liye */
+        }
+
+        .hero-img:hover img {
+            transform: scale(1.05); /* Thoda zoom effect */
+        }
+
+        /* Text Section */
+        .hero-text {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex: 1;
+            padding: 100px; /* Text takes equal space */
+        }
+
+        .hero-text h1 {
+            font-size: 55px;
+            line-height: 1.2;
+            color: #333;
+        }
+
+        .hero-text h4 {
+            font-size: 20px;
+            color: #666;
+            font-weight: normal;
+        }
+
+        /* Section 2 Banner */
+        .section_2 {
+            display: flex;
+            width: 100%;
+            height: auto;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        /* Menu Button Section */
+        .menu-button-container {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+        }
+
+        /* Grid Images Section */
+        .image-section {
+            display: grid;
+            grid-column: auto;
+            gap: 20px;
+        }
+
+        .slot1 {
+            margin: 0 auto;
+            margin-top: 20px;
+            max-width: 1200px;
+            display: flex;
+            gap: 20px;
+            justify-content: center; /* Center content */
+        }
+
+        .slot2 {
+            display: flex;
+            margin: 0 auto;
+            margin-top: 20px;
+            max-width: 1200px;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .center {
+            justify-content: center;
+            display: grid;
+            padding-top: 30px;
+            padding-bottom: 50px;
+        }
+
+        /* Footer Styling */
+        footer {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            background-color: #f9f9f9; /* Optional background color */
+            padding-bottom: 40px;
+        }
+
+        .footer {
+            display: flex;
+            max-width: 1200px;
+            width: 100%;
+            margin-top: 50px;
+            justify-content: space-around; /* Space evenly */
+        }
+
+        .image {
+            justify-content: center;
+        }
+
+        .mainlink {
+            display: flex;
+            flex-direction: column;
+            margin-top: 5px;
+            justify-content: center;
+        }
+
+        .support {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        /* Links styling */
+        .mainlink p, .support p {
+            margin-top: 10px;
+            color: #555;
+            cursor: pointer;
+        }
+
+        /* --- MOBILE RESPONSIVE CSS (Yahan Main Changes Hain) --- */
+        
+        /* 1. Global Image Fix: Images kabhi bhi container se bahar nahi jayengi */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        @media (max-width: 768px) {
+            
+            /* Navbar padding adjust */
+            .navbar {
+                padding: 10px;
+            }
+
+            /* Hero Section: Stack Image and Text */
+            .container {
+                flex-direction: column-reverse; /* Text neeche, Image upar */
+                text-align: center;
+                padding: 20px;
+            }
+
+            .hero-text {
+                align-items: center; /* Center align text */
+            }
+
+            .hero-text h1 {
+                font-size: 32px; /* Smaller font for mobile */
+            }
+            
+            .hero-text h4 {
+                font-size: 16px;
+            }
+
+            /* Slots (Food Grid): Stack vertical */
+            .slot1, .slot2 {
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+            }
+
+            /* Images inside slots should take full width on mobile */
+            .slot1 img, .slot2 img, .image-section img {
+                width: 100% !important; /* Force full width */
+                max-width: 350px; /* Lekin bohot bada bhi na ho */
+            }
+            
+            /* Hide the small 3rd image inside slot1 if layout breaks, or stack it */
+            .image-section {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+
+            /* Footer: Stack vertical */
+            .footer {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 30px; /* Elements ke beech space */
+            }
+
+            .mainlink, .support {
+                margin: 0; /* Remove default margins */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="navbar">
+            <div class="logo">
+                <img src="logo.png" alt="Logo" width="150px">
+            </div>
+            <div class="three">
+                <img src="image.png" alt="Menu" width="30px">
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero-img">
+            <img src="hero_image.png" alt="Hero Food Image">
+        </div>
+        <div class="hero-text">
+            <h1>Enjoy Your <br> <span style="color: orange;">Delicious Food</span></h1>
+            <h4>Thank you for joining us. We serve the best quality food in town.</h4>
+
+            <button
+                style="padding: 12px 24px; background-color: orange; color: white; border: none; font-size: 18px; border-radius: 5px; cursor: pointer; width: fit-content;">Explore
+                Now</button>
+        </div>
+    </div>
+
+    <div class="section_2">
+        <img src="image copy.png" alt="Banner Image" width="1000px">
+    </div>
+
+    <div class="menu-button-container">
+        <button
+            style="padding: 12px 24px; background-color: orange; color: white; border: none; font-size: 18px; border-radius: 5px; cursor: pointer;">
+            Our Menu
+        </button>
+    </div>
+
+    <div class="center">
+        <div class="slot1">
+            <div class="image1">
+                <img src="grid_image1.png" alt="Food 1" width="520px" height="350px">
+            </div>
+            <div class="image2">
+                <img src="grid_image2.png" alt="Food 2" width="250px" height="350px">
+            </div>
+            <div class="image-section">
+                <div class="image3">
+                    <img src="grid_image3.png" alt="Food 3" width="250px" height="225px">
+                </div>
+            </div>
+        </div>
+        
+        <div class="slot2">
+            <div class="image4">
+                <img src="grid_image4.png" alt="Food 4" width="250px" height="200px">
+            </div>
+            <div class="image5">
+                <img src="grid_image5.png" alt="Food 5" width="250px" height="200px">
+            </div>
+            <div class="image6">
+                <img src="grid_image6.png" alt="Food 6" width="250px" height="200px">
+            </div>
+            <div class="image7">
+                <img src="grid_image7.png" alt="Food 7" width="250px" height="200px">
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer">
+            <div class="image">
+                <img src="logo.png" alt="Footer Logo" width="250px">
+            </div>
+            <div class="mainlink">
+                <h3>Main Links</h3>
+                <p>Our Website</p>
+                <p>Instagram</p>
+                <p>Facebook</p>
+                <p>WhatsApp</p>
+            </div>
+            <div class="support">
+                <h3>Support</h3>
+                <p>About Us</p>
+                <p>Privacy Policy</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

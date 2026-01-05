@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Attendance Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Custom scrollbar for better mobile feel */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        .tap-effect:active { transform: scale(0.95); transition: transform 0.1s; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header & Overall Stats -->
+    <header class="bg-white shadow-sm sticky top-0 z-10 border-b border-slate-200">
+        <div class="max-w-3xl mx-auto px-4 py-4">
+            <h1 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                <i class="fas fa-university text-indigo-600"></i> Attendance Manager
+            </h1>
+            
+            <!-- Overall Dashboard -->
+            <div class="mt-4 bg-indigo-50 rounded-xl p-4 border border-indigo-100 flex justify-between items-center">
+                <div>
+                    <p class="text-xs text-indigo-500 font-semibold uppercase tracking-wide">Overall Attendance</p>
+                    <div class="flex items-baseline gap-1">
+                        <span id="overall-percentage" class="text-3xl font-bold text-indigo-700">0%</span>
+                        <span class="text-sm text-indigo-400">Average</span>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs text-slate-500">Total Classes</p>
+                    <p id="total-classes-count" class="font-semibold text-slate-700">0</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-3xl mx-auto px-4 py-6 w-full">
+        
+        <!-- Add Subject Form -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-6">
+            <div class="flex flex-col gap-3">
+                <input type="text" id="subject-input" placeholder="Subject Name (e.g. Physics)" 
+                    class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm transition-all"
+                    onkeypress="handleEnter(event)">
+                
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center space-x-2 cursor-pointer select-none text-slate-600">
+                        <input type="checkbox" id="has-lab-checkbox" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300">
+                        <span class="text-sm font-medium">Includes Lab/Practical?</span>
+                    </label>
+                    
+                    <button onclick="addSubject()" 
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold shadow-md tap-effect transition-colors">
+                        Add <i class="fas fa-plus ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subject List Container -->
+        <div id="subject-list" class="grid grid-cols-1 gap-4 pb-20">
+            <!-- Cards will be injected here by JS -->
+        </div>
+
+        <!-- Empty State (Shown when no subjects) -->
+        <div id="empty-state" class="hidden flex-col items-center justify-center py-12 text-slate-400">
+            <i class="fas fa-clipboard-list text-6xl mb-4 opacity-20"></i>
+            <p>No subjects added yet.</p>
+        </div>
+
+    </main>
+
+    <!-- Footer / Reset -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center">
+        <h3>This Attendance strat Form 1 JAN 2026</h3>
+        <button onclick="resetAllData()" class="text-red-500 text-sm font-semibold hover:text-red-700 transition-colors">
+            <i class="fas fa-trash-alt mr-1"></i> Reset All Data
+        </button>
+        <p class="text-xs text-slate-400 mt-2">Data is saved automatically to your device.</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // State Management
+        // Structure update: subject now has 'hasLab', 'lectureStats', 'labStats'
+        let subjects = JSON.parse(localStorage.getItem('collegeAttendanceData')) || [];
+
+        // Migrate old data if necessary (simple check)
+        subjects = subjects.map(sub => {
+            if (sub.lectureStats === undefined) {
+                return {
+                    ...sub,
+                    hasLab: false,
+                    lectureStats: { present: sub.present, total: sub.total },
+                    labStats: { present: 0, total: 0 }
+                };
+            }
+            return sub;
+        });
+
+        // DOM Elements
+        const subjectInput = document.getElementById('subject-input');
+        const hasLabCheckbox = document.getElementById('has-lab-checkbox');
+        const subjectList = document.getElementById('subject-list');
+        const overallPercentageEl = document.getElementById('overall-percentage');
+        const totalClassesCountEl = document.getElementById('total-classes-count');
+        const emptyState = document.getElementById('empty-state');
+
+        // Initial Render
+        renderSubjects();
+
+        // Handle "Enter" key in input
+        function handleEnter(e) {
+            if (e.key === 'Enter') addSubject();
+        }
+
+        // Add New Subject
+        function addSubject() {
+            const name = subjectInput.value.trim();
+            if (!name) return alert("Please enter a subject name.");
+
+            const hasLab = hasLabCheckbox.checked;
+
+            const newSubject = {
+                id: Date.now(),
+                name: name,
+                hasLab: hasLab,
+                lectureStats: { present: 0, total: 0 },
+                labStats: { present: 0, total: 0 },
+                holidays: 0
+            };
+
+            subjects.unshift(newSubject); // Add to top
+            saveData();
+            subjectInput.value = '';
+            hasLabCheckbox.checked = false;
+            renderSubjects();
+        }
+
+        // Delete Subject
+        function deleteSubject(id) {
+            if(confirm("Delete this subject?")) {
+                subjects = subjects.filter(sub => sub.id !== id);
+                saveData();
+                renderSubjects();
+            }
+        }
+
+        // Mark Attendance Logic
+        function mark(id, type, category) {
+            // category: 'lecture' or 'lab' or 'any' (for holiday)
+            const subject = subjects.find(s => s.id === id);
+            if (!subject) return;
+
+            if (type === 'holiday') {
+                subject.holidays++;
+            } else {
+                // Determine which stats to update
+                let stats = (category === 'lab') ? subject.labStats : subject.lectureStats;
+
+                if (type === 'present') {
+                    stats.present++;
+                    stats.total++;
+                } else if (type === 'absent') {
+                    stats.total++;
+                }
+            }
+
+            saveData();
+            renderSubjects();
+        }
+
+        // Calculate Percentage Helper
+        function getPercent(present, total) {
+            if (total === 0) return 100; 
+            return Math.round((present / total) * 100);
+        }
+
+        // Color helper based on percentage
+        function getColorClass(percent, total) {
+            if (total === 0) return 'text-slate-600';
+            if (percent >= 75) return 'text-green-600';
+            if (percent >= 60) return 'text-yellow-600';
+            return 'text-red-600';
+        }
+
+        function getBarColor(percent, total) {
+            if (total === 0) return 'bg-slate-300';
+            if (percent >= 75) return 'bg-green-500';
+            if (percent >= 60) return 'bg-yellow-500';
+            return 'bg-red-500';
+        }
+
+        // Save to LocalStorage
+        function saveData() {
+            localStorage.setItem('collegeAttendanceData', JSON.stringify(subjects));
+            updateOverallStats();
+        }
+
+        // Update Overall Stats Header
+        function updateOverallStats() {
+            let totalClasses = 0;
+            let totalPresent = 0;
+
+            subjects.forEach(s => {
+                totalClasses += s.lectureStats.total + s.labStats.total;
+                totalPresent += s.lectureStats.present + s.labStats.present;
+            });
+
+            totalClassesCountEl.innerText = totalClasses;
+            
+            if (totalClasses === 0) {
+                overallPercentageEl.innerText = "0%";
+                overallPercentageEl.className = "text-3xl font-bold text-slate-400";
+            } else {
+                const overall = Math.round((totalPresent / totalClasses) * 100);
+                overallPercentageEl.innerText = `${overall}%`;
+                
+                if (overall >= 75) overallPercentageEl.className = "text-3xl font-bold text-green-600";
+                else if (overall >= 60) overallPercentageEl.className = "text-3xl font-bold text-yellow-600";
+                else overallPercentageEl.className = "text-3xl font-bold text-red-600";
+            }
+        }
+
+        // Render the List
+        function renderSubjects() {
+            subjectList.innerHTML = '';
+            
+            if (subjects.length === 0) {
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+            } else {
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+            }
+
+            subjects.forEach(subject => {
+                // Calculate Combined Stats for Main Display
+                const totalP = subject.lectureStats.present + subject.labStats.present;
+                const totalT = subject.lectureStats.total + subject.labStats.total;
+                
+                const percent = getPercent(totalP, totalT);
+                const colorClass = getColorClass(percent, totalT);
+                const barColor = getBarColor(percent, totalT);
+
+                // Stats strings
+                const lectureStr = `${subject.lectureStats.present}/${subject.lectureStats.total}`;
+                const labStr = `${subject.labStats.present}/${subject.labStats.total}`;
+                
+                // Card HTML
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-xl shadow-sm border border-slate-200 p-5 relative overflow-hidden";
+                
+                let actionButtonsHTML = '';
+
+                // Logic for Buttons based on HasLab
+                if (subject.hasLab) {
+                    // SPLIT VIEW
+                    actionButtonsHTML = `
+                        <div class="grid grid-cols-1 gap-3">
+                            <!-- Lecture Row -->
+                            <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg">
+                                <span class="text-xs font-bold text-slate-500 w-16">LECTURE</span>
+                                <div class="flex gap-2">
+                                    <button onclick="mark(${subject.id}, 'present', 'lecture')" class="bg-green-100 text-green-700 px-4 py-2 rounded-md hover:bg-green-200 text-sm font-bold tap-effect"><i class="fas fa-check"></i> P</button>
+                                    <button onclick="mark(${subject.id}, 'absent', 'lecture')" class="bg-red-100 text-red-700 px-4 py-2 rounded-md hover:bg-red-200 text-sm font-bold tap-effect"><i class="fas fa-times"></i> A</button>
+                                </div>
+                            </div>
+                            <!-- Lab Row -->
+                            <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg">
+                                <span class="text-xs font-bold text-slate-500 w-16">LAB</span>
+                                <div class="flex gap-2">
+                                    <button onclick="mark(${subject.id}, 'present', 'lab')" class="bg-green-100 text-green-700 px-4 py-2 rounded-md hover:bg-green-200 text-sm font-bold tap-effect"><i class="fas fa-check"></i> P</button>
+                                    <button onclick="mark(${subject.id}, 'absent', 'lab')" class="bg-red-100 text-red-700 px-4 py-2 rounded-md hover:bg-red-200 text-sm font-bold tap-effect"><i class="fas fa-times"></i> A</button>
+                                </div>
+                            </div>
+                            <!-- Holiday (Common) -->
+                            <button onclick="mark(${subject.id}, 'holiday', 'any')" class="w-full bg-amber-50 text-amber-600 py-2 rounded-lg text-xs font-bold hover:bg-amber-100 tap-effect">
+                                Holiday / Class Cancelled
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    // SIMPLE VIEW (Lecture Only buttons)
+                    actionButtonsHTML = `
+                        <div class="grid grid-cols-3 gap-2 mt-2">
+                            <button onclick="mark(${subject.id}, 'present', 'lecture')" 
+                                class="tap-effect flex flex-col items-center justify-center bg-green-50 hover:bg-green-100 text-green-700 py-3 rounded-lg border border-green-200 transition-colors">
+                                <i class="fas fa-check mb-1 text-lg"></i>
+                                <span class="text-xs font-bold">Present</span>
+                            </button>
+                            
+                            <button onclick="mark(${subject.id}, 'absent', 'lecture')" 
+                                class="tap-effect flex flex-col items-center justify-center bg-red-50 hover:bg-red-100 text-red-700 py-3 rounded-lg border border-red-200 transition-colors">
+                                <i class="fas fa-times mb-1 text-lg"></i>
+                                <span class="text-xs font-bold">Absent</span>
+                            </button>
+                            
+                            <button onclick="mark(${subject.id}, 'holiday', 'any')" 
+                                class="tap-effect flex flex-col items-center justify-center bg-amber-50 hover:bg-amber-100 text-amber-700 py-3 rounded-lg border border-amber-200 transition-colors">
+                                <i class="fas fa-coffee mb-1 text-lg"></i>
+                                <span class="text-xs font-bold">Holiday</span>
+                            </button>
+                        </div>
+                    `;
+                }
+
+                // Breakdown Text
+                let breakdownHTML = `<span class="mr-3">Lec: <b>${lectureStr}</b></span>`;
+                if(subject.hasLab) {
+                    breakdownHTML += `<span>Lab: <b>${labStr}</b></span>`;
+                }
+
+                card.innerHTML = `
+                    <button onclick="deleteSubject(${subject.id})" class="absolute top-3 right-3 text-slate-300 hover:text-red-400 transition-colors p-1">
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                    <div class="flex justify-between items-end mb-2">
+                        <h3 class="font-bold text-lg text-slate-800 truncate pr-6 flex items-center gap-2">
+                            ${subject.name}
+                            ${subject.hasLab ? '<span class="text-[10px] bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded uppercase tracking-wider">w/ Lab</span>' : ''}
+                        </h3>
+                        <span class="text-2xl font-bold ${colorClass}">${totalT === 0 ? '0' : percent}%</span>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 mb-2 overflow-hidden">
+                        <div class="${barColor} h-2.5 rounded-full transition-all duration-500" style="width: ${totalT === 0 ? 0 : percent}%"></div>
+                    </div>
+
+                    <div class="flex flex-wrap justify-between text-xs text-slate-500 mb-4 px-1">
+                        <div class="flex">
+                            ${breakdownHTML}
+                        </div>
+                        <span>Holidays: <strong class="text-slate-700">${subject.holidays}</strong></span>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    ${actionButtonsHTML}
+                `;
+                subjectList.appendChild(card);
+            });
+            updateOverallStats();
+        }
+
+        // Reset Data
+        function resetAllData() {
+            if(confirm("Are you sure you want to delete all data? This cannot be undone.")) {
+                localStorage.removeItem('collegeAttendanceData');
+                subjects = [];
+                saveData(); // Save the empty array
+                renderSubjects();
+            }
+        }
+    </script>
+</body>
+</html>

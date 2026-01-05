@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | SETU PATEL</title>
+</head>
+<style>
+    /* Basic Reset */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        background-color: rgb(67, 48, 105);
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    }
+
+    /* Main container for alignment */
+    .containere {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh; /* Poori screen height le */
+        padding: 20px;
+    }
+
+    /* Image Container - Isko Relative banayenge */
+    .hero_img {
+        position: relative; /* Zaroori hai: Text iske hisab se position hoga */
+        max-width: 1000px;
+        width: 100%;
+        border: 2px solid black; /* Fixed border syntax */
+        box-shadow: 0 10px 20px rgba(0,0,0,0.5); /* Thoda shadow achi look ke liye */
+    }
+
+    /* Image styling to be responsive */
+    .hero_img img {
+        width: 100%;
+        height: auto;
+        display: block; /* Image ke neeche ka extra gap hatane ke liye */
+        filter: brightness(.8); /* Image ko thoda dark kiya taaki text highlight ho */
+    }
+
+    /* Text Container - Isko Absolute banayenge */
+    .hero_text {
+        position: absolute; /* Zaroori hai: Image ke upar aane ke liye */
+        top: 65px;  /* Upar se 50% neech */
+        left: 280px; /* Left se 50% aage */
+        transform: translate(-50%, -50%); /* Bilkul center mein lane ke liye trick */
+        
+        text-align: center;
+        color: black; /* Dark image par white text */
+        width: 90%; /* Taaki text kinaaro se na chipke */
+    }
+
+    .hero_text h1 {
+        font-size: 3rem;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .hero_text h3 {
+        font-size: 20px;
+        font-weight: normal;
+    }
+
+    .hero_text b {
+        color: #2fc6e1; /* Naam ko highlight karne ke liye Gold color */
+    }
+    .box{
+        margin: 0% auto;
+        padding: 25px;
+        color: white;
+        background-color: black;
+        text-align: center;
+        max-width: 950px;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+    }
+    .box h1{
+        font-size:35px ;
+      
+    }
+    .box span{
+        font-size: 50px;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+
+        
+        
+ }
+
+</style>
+<body>
+    
+    <div class="containere">
+        <div class="hero_img">
+            <img src="https://i.pinimg.com/1200x/95/88/41/95884135768414cc29ea773af2cef4f6.jpg" alt="Background Hero Image">
+            
+            <div class="hero_text">
+                <h1>Website Developer</h1>
+                <h3> <b>PATEL SETU</b> Professional Website Developer</h3>
+            </div>
+         
+        </div>
+        
+    </div>
+    <div class="box">
+            <h1>WORK,I CAN DO FOR <span>YOU</span> 
+        </div>
+    
+</body>
+</html>
